@@ -55,9 +55,9 @@ def cliente_opc():
     print("[OPC] Vars bound:",
           "TargetX/TargetY/TargetZ & DroneX/DroneY/DroneZ")
     
-    tX.set_value(4)
-    tY.set_value(4)
-    tZ.set_value(4)
+    tX.set_value(0)
+    tY.set_value(0)
+    tZ.set_value(0)
     return client, (tX, tY, tZ, dX, dY, dZ)
 
 
