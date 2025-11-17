@@ -6,6 +6,7 @@ from opcua import Client
 url = "opc.tcp://Matheus:53530/OPCUA/SimulationServer"
 
 def cliente_opc():
+    global tX, tY, tZ, dX, dY, dZ
     client = Client(url)
     client.connect()
     print("teste")
@@ -51,17 +52,12 @@ def cliente_opc():
             "Quero TargetX, TargetY, TargetZ, DroneX, DroneY, DroneZ. "
             f"Encontradas: {found}"
         )
-
-    print("[OPC] Vars bound:",
-          "TargetX/TargetY/TargetZ & DroneX/DroneY/DroneZ")
     
-    tX.set_value(0)
-    tY.set_value(0)
-    tZ.set_value(0)
     return client, (tX, tY, tZ, dX, dY, dZ)
 
 
 def servidor_TCP():
+    global tX, tY, tZ, dX, dY, dZ
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     adress = ('localhost', 53444)
     sock.bind(adress)
@@ -69,13 +65,21 @@ def servidor_TCP():
 
     while True:
         connection, adress =  sock.accept()
-        print("Conectado a ",adress)
         try:
             while True:
                 data = connection.recv(3200)
+                print(data)
                 if data:
-                    msg = str(data)
-                    msg = msg + "sei la"
+                    data=data.decode()
+                    data=data.split(",")
+                    val_atualizados=[]
+                    for i in range(len(data)):
+                        val_atualizados.append(float(data[i]))
+                    tX.set_value(val_atualizados[0])
+                    tY.set_value(val_atualizados[1])
+                    tZ.set_value(val_atualizados[2])
+                    msg = f"{dX.get_value()},{dY.get_value()},{dZ.get_value()}"
+                    print(msg)
                     msg = bytes(msg, 'utf-8')
                     connection.sendall(msg)
                 else:
@@ -84,7 +88,6 @@ def servidor_TCP():
             print("erro")
         finally:
             connection.close()
-    print("teste_2")
 
 def main():
     cliente = Thread(target=cliente_opc)
