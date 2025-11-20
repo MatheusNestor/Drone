@@ -78,14 +78,17 @@ def servidor_TCP():
                     tX.set_value(val_atualizados[0])
                     tY.set_value(val_atualizados[1])
                     tZ.set_value(val_atualizados[2])
-                    msg = f"{dX.get_value()},{dY.get_value()},{dZ.get_value()}"
+                    msg = f"{dX.get_value():.2f},{dY.get_value():.2f},{dZ.get_value():.2f}"
                     print(msg)
                     msg = bytes(msg, 'utf-8')
                     connection.sendall(msg)
                 else:
                     break
         except:
-            print("erro")
+            print("Parece que algo deu errado. Por segurança, o drone retornará ao estado inicial.")
+            tX.set_value(0)
+            tY.set_value(0)
+            tZ.set_value(0)
         finally:
             connection.close()
 
