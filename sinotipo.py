@@ -243,7 +243,7 @@ def historiador():
         arquivo_txt.write(f"Timestamp, Target tX, Target tY, Target tZ, Posição dX, Posição dY, Posição dZ\n")
         while rodando:
             arquivo_txt.write(f"{datetime.now()}, {tX:.2f}, {tY:.2f}, {tZ:.2f}, {dX:.2f}, {dY:.2f}, {dZ:.2f}\n")
-            sleep(0.1)
+            sleep(0.01)
 
 
 def main():
