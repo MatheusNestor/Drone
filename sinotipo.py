@@ -1,4 +1,5 @@
 import socket
+import os
 from time import sleep
 from threading import Thread
 import customtkinter as ctk
@@ -27,6 +28,8 @@ def att_Y(valor):
     tY = valor
     #print(f"Valor de Y atualizado para {valor}")
 
+#Define uma pequena volta automática que passa por todos os pontos principais
+#Bloqueia propositalmente toda alteração manual
 def volta():
     global tX, tY, tZ
     cont = 0
@@ -35,7 +38,7 @@ def volta():
         tX = posic_padr[cont][0]
         tY = posic_padr[cont][1]
         tZ = posic_padr[cont][2]
-        sleep(15)
+        sleep(42)
         cont=cont+1
     
 
@@ -46,13 +49,52 @@ def retornar():
     tZ = 0
 
 def encerrar():
-    cliente.kill()
-    visual.kill()
+    global rodando
+    rodando=False
 
-    
+rodando = True
+def verifi_rodando():
+    global rodando
+    while True:
+        if rodando == False:
+            os.kill(os.getpid(),9)
+            break
+        sleep(0.01)
+
+#Atualiza as varíaveis de texto exibidas nos labels
+def exibirdX_aluatilzado():
+    global  text_dx, dX, app
+    text_dx.set(f"X: {dX:.2f}")
+    app.after(100,exibirdX_aluatilzado)
+
+def exibirdY_aluatilzado():
+    global  text_dy, dY, app
+    text_dy.set(f"Y: {dY:.2f}")
+    app.after(100,exibirdY_aluatilzado)
+
+def exibirdZ_aluatilzado():
+    global  text_dz, dZ, app
+    text_dz.set(f"Z (altura): {dZ:.2f}")
+    app.after(100,exibirdZ_aluatilzado)
+
+def exibirtX_aluatilzado():
+    global  text_tx, tX, app
+    text_tx.set(f"X: {tX:.2f}")
+    app.after(100,exibirtX_aluatilzado)
+
+def exibirtY_aluatilzado():
+    global  text_ty, tY, app
+    text_ty.set(f"Y: {tY:.2f}")
+    app.after(100,exibirtY_aluatilzado)
+
+def exibirtZ_aluatilzado():
+    global  text_tz, tZ, app
+    text_tz.set(f"Z (altura): {tZ:.2f}")
+    app.after(100,exibirtZ_aluatilzado)
+
 #Define o cliente que se comunica com o Servidor TPC/IP no CLP.py
 def cliente_TCP(): 
-    global tX, tY, tZ, dX, dY, dZ 
+    global tX, tY, tZ, dX, dY, dZ
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     adress = ('localhost', 53444)
     sock.connect(adress) 
@@ -81,16 +123,22 @@ def cliente_TCP():
 
     finally:
         sock.close()
-    
+
+
 def aplicativo():
-    global tX, tY, tZ, dX, dY, dZ
-    # Configurando estética
+    global app, tX, tY, tZ, dX, dY, dZ, text_tx, text_ty, text_tz, text_dx, text_dy, text_dz
+
+
+
+    # Configurando estética e config. padrões
     ctk.deactivate_automatic_dpi_awareness()
     ctk.set_appearance_mode('light')
     app = ctk.CTk()
     app.title('Controle do Drone')
     app.geometry('700x520')
     app.resizable(False,False)
+    app.protocol("WM_DELETE_WINDOW",encerrar)
+    
     
     #Título
     frame_tit = ctk.CTkFrame(app, corner_radius=15)
@@ -107,6 +155,9 @@ def aplicativo():
     #Controle deslizantes
     frame_esquerda = ctk.CTkFrame(app, corner_radius=15)
     frame_esquerda.pack(pady=10, padx=10, fill='both', expand=True, side='left')
+    frame_esquerda_titulo = ctk.CTkLabel(frame_esquerda, text="Target", font=("Arial", 16))
+    frame_esquerda_titulo.pack(pady=10)   
+    
     
     #Forçando o Drone a voltar pra posição inicial e então matar o processo
     frame_baixo = ctk.CTkFrame(app, corner_radius=15, width=200)
@@ -123,57 +174,81 @@ def aplicativo():
     #Valores atualizados
     frame_direita = ctk.CTkFrame(app, corner_radius=15)
     frame_direita.pack(pady=10, padx=10, fill='both', expand=True, side='right')
-    frame_direita_titulo = ctk.CTkLabel(frame_direita, text="Posição Atual")
+    frame_direita_titulo = ctk.CTkLabel(frame_direita, text="Posição Atual", font=("Arial", 16))
     frame_direita_titulo.pack(pady=10)   
     
+
+    
+    #Exibir tX
+    text_tx = ctk.DoubleVar()
+    text_tx.set(f"X: {tX:.2f}")
+    exibirtX = ctk.CTkLabel(frame_esquerda, textvariable=text_tx)
+    exibirtX.pack(pady=10)
+    exibirtX_aluatilzado()
+
     #Controle deslizante X
-    EixoX = ctk.CTkLabel(frame_esquerda, text='X')
-    EixoX.pack(pady=10)
     barra_EixoX = ctk.CTkSlider(frame_esquerda, from_=-4.0, to=4.0, command=att_X)
     barra_EixoX.pack(pady=10)
-    
-    #Exibir X
-    texto=f"{dX}"
-    exibirX = ctk.CTkLabel(frame_direita, textvariable=texto)
-    exibirX.pack(pady=10)
+
+    #Exibir dX
+    text_dx = ctk.DoubleVar()
+    text_dx.set(f"X: {dX:.2f}")
+    exibirdX = ctk.CTkLabel(frame_direita, textvariable=text_dx)
+    exibirdX.pack(pady=10)
+    exibirdX_aluatilzado()
+
+
+
+    #Exibir tY
+    text_ty = ctk.DoubleVar()
+    text_ty.set(f"Y: {tY:.2f}")
+    exibirtY = ctk.CTkLabel(frame_esquerda, textvariable=text_ty)
+    exibirtY.pack(pady=10)
+    exibirtY_aluatilzado()
 
     #Controle deslizante Y
-    EixoY = ctk.CTkLabel(frame_esquerda, text='Y')
-    EixoY.pack(pady=10)
     barra_EixoY = ctk.CTkSlider(frame_esquerda, from_=-4.0, to=4.0, command=att_Y)
     barra_EixoY.pack(pady=10)
-    
-    text_y = ctk.DoubleVar()
-    text_y.set(str(dY))
-    exibirY = ctk.CTkLabel(frame_direita, textvariable=text_y)
-    exibirY.pack(pady=10)
+
+    #Exibir dY    
+    text_dy = ctk.DoubleVar()
+    text_dy.set(f"Y: {dY:.2f}")
+    exibirdY = ctk.CTkLabel(frame_direita, textvariable=text_dy)
+    exibirdY.pack(pady=10)
+    exibirdY_aluatilzado()
+
+    #Exibir tZ
+    text_tz = ctk.DoubleVar()
+    text_tz.set(f"Z (altura): {tZ:.2f}")
+    exibirtZ = ctk.CTkLabel(frame_esquerda, textvariable=text_tz)
+    exibirtZ.pack(pady=10)
+    exibirtZ_aluatilzado()
 
     #Controle deslizante altura
-    altura = ctk.CTkLabel(frame_esquerda, text='Z (Altura)')
-    altura.pack(pady=10)
     barra_altura = ctk.CTkSlider(frame_esquerda, from_=0.0, to=5, command=att_alt)
     barra_altura.number_of_steps=10
     barra_altura.pack(pady=10)
     
+    #Exibir dZ    
+    text_dz = ctk.DoubleVar()
+    text_dz.set(f"Z: {dZ:.2f}")
+    exibirdZ = ctk.CTkLabel(frame_direita, textvariable=text_dz)
+    exibirdZ.pack(pady=10)
+    exibirdZ_aluatilzado()
     
-    exibirZ = ctk.CTkLabel(frame_direita, text="dZ")
-    exibirZ.pack(pady=10)
-    
-
-
-
     app.mainloop()
 
 
 def main():
-    global cliente
     cliente = Thread(target=cliente_TCP)
     cliente.start()
-    
-    global visual
+
     visual = Thread(target=aplicativo)
     visual.start()
-
+    
+    verifica_rodando = Thread(target=verifi_rodando)
+    verifica_rodando.start()
+    #aplicativo()
 
 if __name__ == "__main__":
     main()
