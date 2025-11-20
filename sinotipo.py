@@ -1,5 +1,6 @@
 import socket
 import os
+from datetime import datetime
 from time import sleep
 from threading import Thread
 import customtkinter as ctk
@@ -16,17 +17,17 @@ dZ = 0
 def att_alt(valor):
     global tZ
     tZ = valor
-    #print(f"Valor da altura atualizado para {valor}")
+
 
 def att_X(valor):
     global tX
     tX = valor
-    #print(f"Valor de X atualizado para {valor}")
+
 
 def att_Y(valor):
     global tY
     tY = valor
-    #print(f"Valor de Y atualizado para {valor}")
+
 
 #Define uma pequena volta automática que passa por todos os pontos principais
 #Bloqueia propositalmente toda alteração manual
@@ -52,11 +53,13 @@ def encerrar():
     global rodando
     rodando=False
 
+
 rodando = True
 def verifi_rodando():
     global rodando
     while True:
         if rodando == False:
+            print("Conexão encerrada. O Drone voltará para (0,0,0).")
             os.kill(os.getpid(),9)
             break
         sleep(0.01)
@@ -97,13 +100,12 @@ def cliente_TCP():
     global tX, tY, tZ, dX, dY, dZ
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     adress = ('localhost', 53444)
-    sock.connect(adress) 
+    sock.connect(adress)
+    print("Conectado ao servidor.") 
     try:
         while True:
             msg = f"{tX},{tY},{tZ}"
-            print(msg)
             sock.sendall(bytes(msg, 'utf-8'))
-            print("enviado")
 
             recebido = 0
             esperado = len(msg)
@@ -119,7 +121,7 @@ def cliente_TCP():
                 dZ = val_atualizados[2]
                 recebido = recebido + len(msg)
 
-            #print(f"Os valores de target atuais são: X={tX:.2f},Y={tY:.2f} e Z={tZ:.2f}")
+
 
     finally:
         sock.close()
@@ -127,8 +129,6 @@ def cliente_TCP():
 
 def aplicativo():
     global app, tX, tY, tZ, dX, dY, dZ, text_tx, text_ty, text_tz, text_dx, text_dy, text_dz
-
-
 
     # Configurando estética e config. padrões
     ctk.deactivate_automatic_dpi_awareness()
@@ -238,6 +238,13 @@ def aplicativo():
     
     app.mainloop()
 
+def historiador():
+    with open("historiador.txt", "w", encoding="utf-8") as arquivo_txt:
+        arquivo_txt.write(f"Timestamp, Target tX, Target tY, Target tZ, Posição dX, Posição dY, Posição dZ\n")
+        while rodando:
+            arquivo_txt.write(f"{datetime.now()}, {tX:.2f}, {tY:.2f}, {tZ:.2f}, {dX:.2f}, {dY:.2f}, {dZ:.2f}\n")
+            sleep(0.1)
+
 
 def main():
     cliente = Thread(target=cliente_TCP)
@@ -248,7 +255,9 @@ def main():
     
     verifica_rodando = Thread(target=verifi_rodando)
     verifica_rodando.start()
-    #aplicativo()
+
+    hist = Thread(target=historiador)
+    hist.start()
 
 if __name__ == "__main__":
     main()

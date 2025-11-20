@@ -9,7 +9,7 @@ def cliente_opc():
     global tX, tY, tZ, dX, dY, dZ
     client = Client(url)
     client.connect()
-    print("teste")
+
 
     root = client.get_objects_node()
 
@@ -62,13 +62,13 @@ def servidor_TCP():
     adress = ('localhost', 53444)
     sock.bind(adress)
     sock.listen(1)
-
+    print("Servidor iniciado. Esperando conexão.")
     while True:
         connection, adress =  sock.accept()
+        print(f"Conectado com sinótipo pelo endereço: {adress}")
         try:
             while True:
                 data = connection.recv(3200)
-                print(data)
                 if data:
                     data=data.decode()
                     data=data.split(",")
@@ -79,7 +79,6 @@ def servidor_TCP():
                     tY.set_value(val_atualizados[1])
                     tZ.set_value(val_atualizados[2])
                     msg = f"{dX.get_value():.2f},{dY.get_value():.2f},{dZ.get_value():.2f}"
-                    print(msg)
                     msg = bytes(msg, 'utf-8')
                     connection.sendall(msg)
                 else:
