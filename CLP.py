@@ -26,7 +26,7 @@ def cliente_opc():
             except Exception:
                 pass
     if drone_folder is None:
-        raise RuntimeError("Não encontrei a pasta 'Drone' no servidor OPC UA.")
+        raise RuntimeError("CLP -> Não encontrei a pasta 'Drone' no servidor OPC UA.")
 
     # Mapeie variáveis por nome (case-insensitive)
     name_to_node = {}
@@ -48,7 +48,7 @@ def cliente_opc():
     if not all([tX, tY, tZ, dX, dY, dZ]):
         found = ", ".join(sorted(name_to_node.keys()))
         raise RuntimeError(
-            "Variáveis esperadas não encontradas. "
+            "CLP -> Variáveis esperadas não encontradas. "
             "Quero TargetX, TargetY, TargetZ, DroneX, DroneY, DroneZ. "
             f"Encontradas: {found}"
         )
@@ -62,10 +62,10 @@ def servidor_TCP():
     adress = ('localhost', 53444)
     sock.bind(adress)
     sock.listen(1)
-    print("Servidor iniciado. Esperando conexão.")
+    print("CLP -> Servidor iniciado. Esperando conexão.")
     while True:
         connection, adress =  sock.accept()
-        print(f"Conectado com sinótipo pelo endereço: {adress}")
+        print(f"CLP -> Conectado com sinótipo pelo endereço: {adress}")
         try:
             while True:
                 data = connection.recv(3200)
@@ -84,7 +84,7 @@ def servidor_TCP():
                 else:
                     break
         except:
-            print("Parece que algo deu errado. Por segurança, o drone retornará ao estado inicial.")
+            print("CLP -> Parece que algo deu errado. Por segurança, o drone retornará ao estado inicial.")
             tX.set_value(0)
             tY.set_value(0)
             tZ.set_value(0)

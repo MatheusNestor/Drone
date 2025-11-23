@@ -34,7 +34,7 @@ def att_Y(valor):
 def volta():
     global tX, tY, tZ
     cont = 0
-    posic_padr=[[-0.32, -1.92, 1.7],[1.88, 0.16, 1.7],[-0.399, 2.16, 1.15],[-2.64, 1.12, 1.15],[0, 0, 0]]
+    posic_padr=[[-0.32, -1.92, 1.7],[1.88, 0.16, 1.7],[-0.399, 2.16, 1.15],[-2.16, 0.88, 1.15],[0, 0, 0]]
     while cont<5:
         tX = posic_padr[cont][0]
         tY = posic_padr[cont][1]
@@ -59,7 +59,7 @@ def verifi_rodando():
     global rodando
     while True:
         if rodando == False:
-            print("Conexão encerrada. O Drone voltará para (0,0,0).")
+            print("Sinotipo -> Conexão encerrada.")
             os.kill(os.getpid(),9)
             break
         sleep(0.01)
@@ -101,7 +101,7 @@ def cliente_TCP():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     adress = ('localhost', 53444)
     sock.connect(adress)
-    print("Conectado ao servidor.") 
+    print("Sinotipo -> Conectado ao servidor.") 
     try:
         while True:
             msg = f"{tX},{tY},{tZ}"
@@ -238,8 +238,9 @@ def aplicativo():
     
     app.mainloop()
 
+#Gera uim arquivo TXT simples. Salva apenas a última utilização.
 def historiador():
-    with open("historiador.txt", "w", encoding="utf-8") as arquivo_txt:
+    with open("arquivos_texto/historiador.txt", "w", encoding="utf-8") as arquivo_txt:
         arquivo_txt.write(f"Timestamp, Target tX, Target tY, Target tZ, Posição dX, Posição dY, Posição dZ\n")
         while rodando:
             arquivo_txt.write(f"{datetime.now()}, {tX:.2f}, {tY:.2f}, {tZ:.2f}, {dX:.2f}, {dY:.2f}, {dZ:.2f}\n")
