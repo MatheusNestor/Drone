@@ -1,15 +1,15 @@
 from subprocess import Popen
 from time import sleep
 
-ponte = Popen(["python", "brigde.py"])
+ponte = Popen(["python", "src/brigde.py"])
 
-clp = Popen(["python", "clp.py"])
+clp = Popen(["python", "src/clp.py"])
 sleep(2)
-chainedserver=Popen(["python", "chainedserver.py"])
+chainedserver=Popen(["python", "src/chainedserver.py"])
 sleep(2)
 
-sinotipo=Popen(["python", "sinotipo.py"])
-mes=Popen(["python", "mes.py"])
+sinotipo=Popen(["python", "src/sinotipo.py"])
+mes=Popen(["python", "src/mes.py"])
 
 sinotipo.wait()
 
