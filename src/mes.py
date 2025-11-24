@@ -69,7 +69,7 @@ def historiador():
     global tX, tY, tZ, dX, dY, dZ
   
 
-    with open("../Drone/arquivos_texto/mes.txt", "w", encoding="utf-8") as arquivo_txt:
+    with open("arquivos_texto/mes.txt", "w", encoding="utf-8") as arquivo_txt:
         arquivo_txt.write(f"Mes -> Timestamp, Target tX, Target tY, Target tZ, Posição dX, Posição dY, Posição dZ\n")
         while rodando:
             valor_tX = float(tX.get_value())

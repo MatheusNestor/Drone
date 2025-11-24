@@ -3,7 +3,8 @@ import socket
 from threading import Thread
 from opcua import Client 
 
-url = "opc.tcp://Matheus:53530/OPCUA/SimulationServer"
+ip = "localhost"
+url = f"opc.tcp://{ip}:53530/OPCUA/SimulationServer"
 
 def cliente_opc():
     global tX, tY, tZ, dX, dY, dZ

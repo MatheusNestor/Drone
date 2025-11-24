@@ -6,7 +6,8 @@ from coppeliasim_zmqremoteapi_client import RemoteAPIClient
 ############################
 # CONFIG
 ############################
-OPCUA_URL   = "opc.tcp://localhost:53530/OPCUA/SimulationServer"
+ip = "localhost"
+OPCUA_URL   = f"opc.tcp://{ip}:53530/OPCUA/SimulationServer"
 DRONE_PATH  = "/Quadcopter/base"
 TARGET_PATH = "/target"
 
@@ -76,7 +77,7 @@ def connect_opc(url=OPCUA_URL):
 # Coppelia helpers
 ############################
 def connect_coppelia():
-    client = RemoteAPIClient()   # 127.0.0.1:23000
+    client = RemoteAPIClient()   
     sim = client.getObject('sim')
 
     # garanta sim parada e inicie
@@ -93,7 +94,7 @@ def connect_coppelia():
     return sim, drone, target
 
 def get_pos(sim, handle):
-    return sim.getObjectPosition(handle, -1)  # world
+    return sim.getObjectPosition(handle, -1)  
 
 def set_pos(sim, handle, p):
     sim.setObjectPosition(handle, -1, list(p))

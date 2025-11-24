@@ -2,8 +2,9 @@ from time import sleep
 from threading import Thread
 from opcua import Client, Server, ua
 
-#Novo namespace criado pro novo servidor
-url = "opc.tcp://Matheus:53530/OPCUA/SimulationServer"
+
+ip = "localhost"
+url = f"opc.tcp://{ip}:53530/OPCUA/SimulationServer"
 
 #Definindo variáveis como globais, por simplicidade
 tX = None
