@@ -8,7 +8,7 @@ sleep(2)
 chainedserver=Popen(["python", "src/chainedserver.py"])
 sleep(2)
 
-sinotipo=Popen(["python", "src/sinotipo.py"])
+sinotipo=Popen(["python", "src/sinotico.py"])
 mes=Popen(["python", "src/mes.py"])
 
 sinotipo.wait()
