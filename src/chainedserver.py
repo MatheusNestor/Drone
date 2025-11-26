@@ -1,6 +1,6 @@
 from time import sleep
 from threading import Thread
-from opcua import Client, Server, ua
+from opcua import Client, Server
 
 
 ip = "localhost"
